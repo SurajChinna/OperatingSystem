@@ -1,13 +1,3 @@
-/*
-    **This is basic summary of the project.
-    **We have a shared resource which is accessed by many processes.
-    **There are two types of processes. They are reader and writer.
-    **Many readers can read from the shared resource simultaneously,
-    **but only one writer can write to the shared resource. When a writer is writing
-    **data to the resource, no other process should access the resource. A writer cannot
-    **write to the resource only if there are non zero number of readers accessing the resource.
-*/
-
 #include<stdio.h>
 #include<pthread.h>
 #include<semaphore.h>
@@ -26,10 +16,10 @@ sem_init(&readCountAccess,0,1);
 sem_init(&databaseAccess,0,1);
 
 pthread_t Readers_thr[100],Writer_thr[100];
-printf(“\nEnter number of Readers thread(MAX 10)”);
-scanf(“%d”,&NumberofReaderThread);
-printf(“\nEnter number of Writers thread(MAX 10)”);
-scanf(“%d”,&NumberofWriterThread);
+printf(â€œ\nEnter number of Readers thread(MAX 10)â€);
+scanf(â€œ%dâ€,&NumberofReaderThread);
+printf(â€œ\nEnter number of Writers thread(MAX 10)â€);
+scanf(â€œ%dâ€,&NumberofWriterThread);
 
 
 
@@ -62,10 +52,10 @@ void * Writer(void *arg)
 
 sleep(1);
 int temp=(int)arg;
-printf(“\nWriter %d is trying to enter into database for modifying the data”,temp);
+printf(â€œ\nWriter %d is trying to enter into database for modifying the dataâ€,temp);
 sem_wait(&databaseAccess);
-printf(“\nWriter %d is writting into the database”,temp);
-printf(“\nWriter %d is leaving the database”);
+printf(â€œ\nWriter %d is writting into the databaseâ€,temp);
+printf(â€œ\nWriter %d is leaving the databaseâ€);
 sem_post(&databaseAccess);
 }
 
@@ -73,20 +63,20 @@ void *Reader(void *arg)
 {
 sleep(1);
 int temp=(int)arg;
-printf(“\nReader %d is trying to enter into the Database for reading the data”,temp);
+printf(â€œ\nReader %d is trying to enter into the Database for reading the dataâ€,temp);
 sem_wait(&readCountAccess);
 readCount++;
 if(readCount==1)
 {
 sem_wait(&databaseAccess);
-printf(“\nReader %d is reading the database”,temp);
+printf(â€œ\nReader %d is reading the databaseâ€,temp);
 }
 sem_post(&readCountAccess);
 sem_wait(&readCountAccess);
-readCount–;
+readCountâ€“;
 if(readCount==0)
 {
-printf(“\nReader %d is leaving the database”,temp);
+printf(â€œ\nReader %d is leaving the databaseâ€,temp);
 sem_post(&databaseAccess);
 }
 sem_post(&readCountAccess);
