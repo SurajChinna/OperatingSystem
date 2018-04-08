@@ -1,83 +1,108 @@
+//Program for readers writers problem.
+//by Surya Prakash Reddy.
+//Last Updated: 08-04-2018
+
+
 #include<stdio.h>
+#include<unistd.h>
 #include<pthread.h>
 #include<semaphore.h>
 
-sem_t readCountAccess;
-sem_t databaseAccess;
-int readCount=0;
 
-void *Reader(void *arg);
-void *Writer(void *arg);
+sem_t readerAccess;
+sem_t variableAccess;
+int readerCount=0;
+int sharedVariable=0;
+
+
+void *Reader(void *args);
+void *Writer(void *args);
+
 
 int main()
 {
-int i=0,NumberofReaderThread=0,NumberofWriterThread;
-sem_init(&readCountAccess,0,1);
-sem_init(&databaseAccess,0,1);
-
-pthread_t Readers_thr[100],Writer_thr[100];
-printf(“\nEnter number of Readers thread(MAX 10)”);
-scanf(“%d”,&NumberofReaderThread);
-printf(“\nEnter number of Writers thread(MAX 10)”);
-scanf(“%d”,&NumberofWriterThread);
+int i=0,NumberofReaderThreads=0,NumberofWriterThreads;
+sem_init(&readerAccess,0,1);
+sem_init(&variableAccess,0,1);
 
 
+pthread_t Readers_threads[100],Writers_threads[100];
+printf("\nEnter the number of Readers threads (MAX 10):");
+scanf("%d",&NumberofReaderThreads);
+printf("\nEnter number of Writers thread(MAX 10)\n");
+scanf("%d",&NumberofWriterThreads);
 
-for(i=0;i<numberofreaderthread;i++)
+
+for(i=0;i<NumberofReaderThreads;i++)
 {
-pthread_create(&Readers_thr[i],NULL,Reader,(void *)i);
-}
-for(i=0;i<numberofwriterthread;i++)
-{
-pthread_create(&Writer_thr[i],NULL,Writer,(void *)i);
-}
-for(i=0;i<NumberofWriterThread;i++)
-{
-pthread_join(Writer_thr[i],NULL);
+pthread_create(&Readers_threads[i],NULL,Reader,(void *)i);
 }
 
-for(i=0;i<NumberofReaderThread;i++)
+
+for(i=0;i<NumberofWriterThreads;i++)
 {
-pthread_join(Readers_thr[i],NULL);
+pthread_create(&Writers_threads[i],NULL,Writer,(void *)i);
 }
-sem_destroy(&databaseAccess);
-sem_destroy(&readCountAccess);
+
+
+for(i=0;i<NumberofWriterThreads;i++)
+{
+pthread_join(Writers_threads[i],NULL);
+}
+
+
+for(i=0;i<NumberofReaderThreads;i++)
+{
+pthread_join(Readers_threads[i],NULL);
+}
+
+
+sem_destroy(&variableAccess);
+sem_destroy(&readerAccess);
+
+
 return 0;
 }
 
+
 void * Writer(void *arg)
 {
-
-
-
-sleep(1);
+sleep(2);
 int temp=(int)arg;
-printf(“\nWriter %d is trying to enter into database for modifying the data”,temp);
-sem_wait(&databaseAccess);
-printf(“\nWriter %d is writting into the database”,temp);
-printf(“\nWriter %d is leaving the database”);
-sem_post(&databaseAccess);
+printf("\nWriter %d is trying to enter into database for modifying the data\n",temp);
+sem_wait(&variableAccess);
+printf("\nWriter %d is writting into the database\n Number of readers are %d\n",temp,readerCount);
+
+int c = sharedVariable;
+c = c+1;
+sharedVariable = c;
+
+printf("\nWriter %d is leaving the database\nValue written is %d\n",temp,sharedVariable);
+sem_post(&variableAccess);
 }
+
 
 void *Reader(void *arg)
 {
-sleep(1);
+sleep(2);
 int temp=(int)arg;
-printf(“\nReader %d is trying to enter into the Database for reading the data”,temp);
-sem_wait(&readCountAccess);
-readCount++;
-if(readCount==1)
+printf("\nReader %d is trying to enter into the Database for reading the data\n",temp);
+sem_wait(&readerAccess);
+readerCount++;
+if(readerCount==1)
 {
-sem_wait(&databaseAccess);
-printf(“\nReader %d is reading the database”,temp);
+sem_wait(&variableAccess);
 }
-sem_post(&readCountAccess);
-sem_wait(&readCountAccess);
-readCount–;
-if(readCount==0)
+sem_post(&readerAccess);
+
+printf("\nReader %d is reading the Database. Value read is %d.\nNumber of readers are %d\n",temp,sharedVariable,readerCount);
+sleep(2);
+sem_wait(&readerAccess);
+readerCount--;
+if(readerCount==0)
 {
-printf(“\nReader %d is leaving the database”,temp);
-sem_post(&databaseAccess);
+sem_post(&variableAccess);
 }
-sem_post(&readCountAccess);
+printf("\nReader %d is leaving the database\n",temp);
+sem_post(&readerAccess);
 }
