@@ -1,5 +1,5 @@
 <h1>Reader Writer Problem</h1>
-<h4>About Project:</h4>
+<h3>About Project:</h3>
 <p>
   The project is a solution to a famous problem called Reader-Writer problem. In this a file is being shared between multiple readers 
   and writers. The readers will only read the data and the writers will modify the content of the data.<br />
@@ -28,5 +28,12 @@
   In the below image you can see that when a writer is writing the data then the number of readers=0 and when the readers are 
   reading the data then the number of reader can be anything.
   <img src="https://github.com/Surya-Prakash-Reddy/Reader-Writer-Problem/blob/master/Screenshot%20(188).png" alt="program output" />
+  
+  <br><br>
+  <h3>How to use: </h3>
+  <p>
+    Download the main.c file and run the program. The program will ask for number of readers and number of writers. Input the 
+    required number then you can see the output.
+  </p>
   
 </p>
