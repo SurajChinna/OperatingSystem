@@ -1,6 +1,6 @@
 //Program for readers writers problem.
 //by Surya Prakash Reddy.
-//Last Updated: 08-04-2018
+//Last Updated: 25-05-2019
 
 
 #include<stdio.h>
@@ -29,7 +29,7 @@ sem_init(&variableAccess,0,1);
 pthread_t Readers_threads[100],Writers_threads[100];
 printf("\nEnter the number of Readers threads (MAX 10):");
 scanf("%d",&NumberofReaderThreads);
-printf("\nEnter number of Writers thread(MAX 10)\n");
+printf("\nEnter number of Writers thread(MAX 10):");
 scanf("%d",&NumberofWriterThreads);
 
 
@@ -67,7 +67,7 @@ return 0;
 
 void * Writer(void *arg)
 {
-sleep(2);
+Sleep(2);
 int temp=(int)arg;
 printf("\nWriter %d is trying to enter into database for modifying the data\n",temp);
 sem_wait(&variableAccess);
@@ -84,7 +84,7 @@ sem_post(&variableAccess);
 
 void *Reader(void *arg)
 {
-sleep(2);
+Sleep(2);
 int temp=(int)arg;
 printf("\nReader %d is trying to enter into the Database for reading the data\n",temp);
 sem_wait(&readerAccess);
@@ -96,7 +96,7 @@ sem_wait(&variableAccess);
 sem_post(&readerAccess);
 
 printf("\nReader %d is reading the Database. Value read is %d.\nNumber of readers are %d\n",temp,sharedVariable,readerCount);
-sleep(2);
+Sleep(2);
 sem_wait(&readerAccess);
 readerCount--;
 if(readerCount==0)
